@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SahabatBK</title><link rel="stylesheet" href="style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script></head><body>
+<main class="login-page"><section class="login-card"><div class="brand"><div class="brand-icon">SB</div><h1>SahabatBK</h1><p>Asisten Digital Bimbingan dan Konseling</p></div><form id="loginForm"><label>Email</label><input type="email" id="email" required><label>Password</label><div class="login-password-wrap">
+<input type="password" id="password" required>
+<button type="button" id="toggleLoginPassword" class="login-password-toggle" aria-label="Lihat password"><svg class="eye-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+</div><button type="submit">Masuk</button></form><p id="message"></p><div class="footer">SahabatBK v2.8<br><strong>Made by YuGoQ</strong></div></section></main>
+<div id="dashboard" class="dashboard" style="display:none"><aside class="sidebar"><div class="sidebar-brand"><strong>SahabatBK</strong><small>Asisten Digital BK</small></div><span id="activeRoleBadge" class="role-badge sidebar-role-badge">Memuat role...</span><nav><button class="menu active">Dashboard</button><button class="menu">Data Siswa</button><button class="menu">Asesmen</button><button class="menu">Bakat & Minat</button><button class="menu">Konseling</button><button class="menu">Tindak Lanjut</button><button class="menu">Karier & Studi</button><button class="menu">Laporan</button><button class="menu">Pengaturan</button></nav><button id="logoutBtn" class="logout-btn">Keluar</button></aside>
+<section class="main-content"><header class="topbar"><div><h2 id="topbarTitle">Dashboard</h2><p id="schoolName">Sekolah</p></div><div class="user-box"><strong id="userName">Pengguna</strong><span id="userRole">Role</span></div></header>
+<div id="dashboardHome">
+<div id="roleDashboard" class="role-dashboard">
+  <div class="dashboard-welcome">
+    <div><span class="eyebrow">SahabatBK</span><h2 id="roleDashboardTitle">Dashboard</h2><p id="roleDashboardSubtitle">Ringkasan layanan Bimbingan dan Konseling Sekolah.</p></div>
+  </div>
+  <div id="roleStats" class="role-stat-grid"></div>
+  <div class="dashboard-panel">
+    <h3>Akses Cepat</h3>
+    <div id="dashboardQuickActions" class="quick-actions"></div>
+  </div>
+</div>
+<div class="welcome-box"><h2 id="welcomeText">Selamat datang</h2><p>Ringkasan Layanan Bimbingan dan Konseling Sekolah.</p></div><div class="stat-grid"><div class="stat-card"><span>Total Siswa</span><strong id="totalStudents">0</strong></div><div class="stat-card"><span>Asesmen</span><strong id="totalAssessments">0</strong></div><div class="stat-card"><span>Konseling</span><strong id="totalCounseling">0</strong></div><div class="stat-card"><span>Perlu Tindak Lanjut</span><strong id="totalFollowups">0</strong></div></div></div>
+<section id="studentPage" class="content-page" style="display:none"><div class="page-header"><div><h2>Data Siswa</h2><p>Kelola data peserta didik.</p></div><div class="header-actions"><button id="importStudentBtn" class="secondary-btn">Impor Excel</button><button id="addStudentBtn" class="primary-btn">+ Tambah Siswa</button><input id="importStudentFile" type="file" accept=".xlsx,.xls" hidden></div></div><div class="import-help">Format Excel: <strong>NAMA, NIS, NISN, KELAS, L/P, STATUS</strong>.<span id="importMessage"></span></div><div class="student-toolbar"><input id="searchStudent" placeholder="Cari nama, NIS, atau NISN..."><select id="classFilter"><option value="">Semua Kelas</option></select><select id="statusFilter"><option value="">Semua Status</option><option value="active">Aktif</option><option value="graduated">Lulus</option><option value="moved">Pindah</option><option value="inactive">Tidak Aktif</option></select></div><div class="table-container"><table class="student-table"><thead><tr><th>NIS</th><th>Nama Siswa</th><th>Kelas</th><th>L/P</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="studentTableBody"></tbody></table></div></section>
+<section id="studentProfilePage" class="content-page" style="display:none"><div class="page-header"><div><button id="backToStudents" class="back-btn">← Kembali</button><h2>Profil Siswa</h2><p>Informasi dan riwayat layanan BK siswa.</p></div><div class="profile-header-actions"><div id="counselorStudentQuickActions" class="profile-quick-actions" style="display:none"><button id="profileQuickCounseling" type="button" class="primary-btn">+ Catat Konseling</button><button id="profileQuickFollowup" type="button" class="secondary-btn">+ Tindak Lanjut</button></div><button id="editStudentBtn" class="primary-btn">Edit Data</button></div></div><div class="profile-card"><div class="profile-avatar" id="profileInitial">S</div><div class="profile-main"><h2 id="profileName">NAMA SISWA</h2><span id="profileStatus" class="status-badge">Aktif</span><div class="profile-grid"><div><small>NIS</small><strong id="profileNis">-</strong></div><div><small>NISN (Opsional)</small><strong id="profileNisn">-</strong></div><div><small>Kelas</small><strong id="profileClass">-</strong></div><div><small>Jenis Kelamin</small><strong id="profileGender">-</strong></div></div></div></div><h3 class="section-title">Riwayat Bimbingan & Konseling</h3><div class="student-bk-grid"><div class="bk-card"><span>Asesmen</span><strong id="profileAssessmentCount">0</strong></div><div class="bk-card"><span>Konseling</span><strong id="profileCounselingCount">0</strong></div><div class="bk-card"><span>Tindak Lanjut</span><strong id="profileFollowupCount">0</strong></div><div class="bk-card"><span>Bakat & Minat</span><strong id="profileTalentStatus">Belum</strong></div></div></section>
+<section id="assessmentPage" class="content-page" style="display:none"><div class="page-header"><div><h2>Asesmen</h2><p>Kelola instrumen asesmen dan pemetaan kebutuhan siswa.</p></div><button id="addAssessmentBtn" class="primary-btn">+ Tambah Asesmen</button></div><div class="student-toolbar"><input id="searchAssessment" placeholder="Cari judul atau jenis asesmen..."><select id="assessmentStatusFilter"><option value="">Semua Status</option><option value="active">Aktif</option><option value="inactive">Nonaktif</option></select></div><div class="table-container"><table class="student-table"><thead><tr><th>Judul</th><th>Jenis</th><th>Status</th><th>Dibuat</th><th>Aksi</th></tr></thead><tbody id="assessmentTableBody"><tr><td colspan="5" class="empty-data">Belum ada asesmen.</td></tr></tbody></table></div></section>
+
+<section id="talentPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Bakat &amp; Minat</h2><p>Pemetaan potensi, minat, dan arah pengembangan siswa.</p></div><button id="addTalentBtn" type="button" class="primary-btn">+ Tambah Pemetaan</button></div>
+<div class="info-card"><strong>Pemetaan Bakat &amp; Minat</strong><p>Hasil digunakan sebagai bahan layanan BK dan pengembangan siswa, bukan sebagai diagnosis psikologis.</p></div>
+<div class="student-toolbar"><input type="text" id="searchTalent" placeholder="Cari nama siswa..."><select id="talentClassFilter"><option value="">Semua Kelas</option></select></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Nama Siswa</th><th>Kelas</th><th>Instrumen</th><th>Ringkasan Hasil</th><th>Aksi</th></tr></thead><tbody id="talentTableBody"><tr><td colspan="5" class="empty-data">Belum ada hasil pemetaan.</td></tr></tbody></table></div>
+</section>
+
+
+<section id="counselingPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Konseling</h2><p>Kelola layanan dan riwayat konseling siswa secara rahasia.</p></div><button id="addCounselingBtn" type="button" class="primary-btn">+ Catat Konseling</button></div>
+<div class="privacy-note"><strong>Privasi:</strong> catatan konseling mengikuti hak akses pengguna dan tingkat kerahasiaan yang ditetapkan.</div>
+<div class="student-toolbar"><input type="text" id="searchCounseling" placeholder="Cari nama siswa atau topik..."><select id="counselingStatusFilter"><option value="">Semua Status</option><option value="open">Terbuka</option><option value="monitoring">Pemantauan</option><option value="completed">Selesai</option><option value="referred">Dirujuk</option></select></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Jenis Layanan</th><th>Topik</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="counselingTableBody"><tr><td colspan="6" class="empty-data">Belum ada catatan konseling.</td></tr></tbody></table></div>
+</section>
+
+
+<section id="followupPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Tindak Lanjut</h2><p>Kelola rencana dan hasil tindak lanjut layanan BK.</p></div><button id="addFollowupBtn" type="button" class="primary-btn">+ Tambah Tindak Lanjut</button></div>
+<div class="student-toolbar"><input type="text" id="searchFollowup" placeholder="Cari nama siswa atau rencana tindakan..."><select id="followupStatusFilter"><option value="">Semua Status</option><option value="planned">Direncanakan</option><option value="in_progress">Proses</option><option value="completed">Selesai</option><option value="cancelled">Dibatalkan</option></select></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Rencana Tindakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="followupTableBody"><tr><td colspan="5" class="empty-data">Belum ada tindak lanjut.</td></tr></tbody></table></div>
+</section>
+
+
+<section id="careerPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Karier &amp; Studi</h2><p>Kelola rencana studi lanjut, kerja, wirausaha, dan arah karier siswa.</p></div><button id="addCareerBtn" type="button" class="primary-btn">+ Tambah Rencana</button></div>
+<div class="info-card"><strong>Perencanaan Masa Depan</strong><p>Data pada modul ini membantu layanan perencanaan individual dan dapat dikaitkan dengan hasil pemetaan Bakat &amp; Minat.</p></div>
+<div class="student-toolbar"><input type="text" id="searchCareer" placeholder="Cari nama siswa, jurusan, atau tujuan..."><select id="careerClassFilter"><option value="">Semua Kelas</option></select><select id="careerPathFilter"><option value="">Semua Rencana</option><option value="kuliah">Kuliah</option><option value="kerja">Kerja</option><option value="wirausaha">Wirausaha</option><option value="kedinasan">Kedinasan</option><option value="lainnya">Lainnya</option></select></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Nama Siswa</th><th>Kelas</th><th>Rencana</th><th>Jurusan/Bidang</th><th>Tujuan</th><th>Aksi</th></tr></thead><tbody id="careerTableBody"><tr><td colspan="6" class="empty-data">Belum ada data rencana karier dan studi.</td></tr></tbody></table></div>
+</section>
+
+
+<section id="reportPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Laporan</h2><p>Rekap layanan BK tanpa membuka isi catatan konseling rahasia.</p></div><div class="header-actions"><button id="printReportBtn" type="button" class="secondary-btn">Cetak</button><button id="exportReportBtn" type="button" class="primary-btn">Ekspor Excel</button></div></div>
+<div class="student-toolbar"><select id="reportClassFilter"><option value="">Semua Kelas</option></select><select id="reportPeriodFilter"><option value="all">Semua Periode</option><option value="month">Bulan Ini</option><option value="year">Tahun Ini</option></select></div>
+<div id="reportPrintable">
+<div class="report-head"><h2 id="reportSchoolName">SahabatBK</h2><p>Rekap Layanan Bimbingan dan Konseling</p><small>Made by YuGoQ</small></div>
+<div class="stat-grid report-stats"><div class="stat-card"><span>Siswa</span><strong id="reportStudents">0</strong></div><div class="stat-card"><span>Asesmen</span><strong id="reportAssessments">0</strong></div><div class="stat-card"><span>Konseling</span><strong id="reportCounseling">0</strong></div><div class="stat-card"><span>Tindak Lanjut Aktif</span><strong id="reportFollowups">0</strong></div></div>
+<h3 class="section-title report-section">Rekap Siswa</h3><div class="table-container"><table class="student-table"><thead><tr><th>Kelas</th><th>Jumlah Siswa</th><th>L</th><th>P</th></tr></thead><tbody id="reportStudentBody"></tbody></table></div>
+<h3 class="section-title report-section">Rekap Asesmen</h3><div class="table-container"><table class="student-table"><thead><tr><th>Asesmen</th><th>Jenis</th><th>Status</th></tr></thead><tbody id="reportAssessmentBody"></tbody></table></div>
+<div class="privacy-note report-privacy"><strong>Privasi terjaga:</strong> laporan administratif hanya menampilkan jumlah layanan Konseling dan Tindak Lanjut. Ringkasan masalah, catatan konseling, dan isi tindak lanjut rahasia tidak dicetak.</div>
+</div>
+</section>
+
+
+<section id="settingsPage" class="content-page" style="display:none;">
+<div class="page-header"><div><h2>Pengaturan</h2><p>Profil sekolah, kelas, pengguna, dan hak akses SahabatBK.</p></div></div>
+<div class="settings-grid">
+<div class="settings-card"><h3>Profil Sekolah</h3><form id="schoolSettingsForm">
+<label>Nama Sekolah</label><input id="settingsSchoolName" type="text" required>
+<label>NPSN</label><input id="settingsNpsn" type="text">
+<label>Alamat</label><textarea id="settingsAddress" rows="3"></textarea>
+<label>Telepon</label><input id="settingsPhone" type="text">
+<label>Email</label><input id="settingsEmail" type="email">
+<button class="primary-btn form-submit" type="submit">Simpan Profil Sekolah</button><p id="schoolSettingsMessage"></p>
+</form></div>
+<div class="settings-card"><h3>Akun Saya</h3><div id="myAccountInfo" class="account-info">Memuat...</div><div class="privacy-note"><strong>Pembagian akses:</strong> Admin Sekolah mengelola sistem. Konselor mengelola data konseling rahasia. Superadmin mengelola platform tanpa otomatis memperoleh isi catatan rahasia.</div></div>
+</div>
+<div class="settings-card settings-wide"><div class="page-header compact"><div><h3>Manajemen Kelas</h3><p>Tambah kelas untuk tahun ajaran yang digunakan.</p></div><button id="addClassBtn" class="primary-btn" type="button">+ Tambah Kelas</button></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Kelas</th><th>Tahun Ajaran</th><th>Tingkat</th></tr></thead><tbody id="settingsClassBody"></tbody></table></div></div>
+<div class="settings-card settings-wide" id="counselorAssignmentCard"><div class="page-header compact"><div><h3>Penugasan Siswa ke Konselor</h3><p class="muted">Tetapkan konselor aktif kepada siswa. Siswa yang sudah memiliki konselor harus dialihkan melalui fitur Serah Terima.</p></div></div>
+<div class="assignment-toolbar">
+  <select id="assignmentCounselorFilter"><option value="">Pilih konselor tujuan</option></select>
+  <select id="assignmentClassFilter"><option value="">Semua kelas</option></select>
+  <input id="assignmentSearch" type="search" placeholder="Cari nama / NIS">
+  <button id="refreshAssignmentsBtn" class="secondary-btn" type="button">Muat Ulang</button>
+</div>
+<div class="assignment-summary" id="assignmentSummary">Memuat data penugasan...</div>
+<div class="table-container"><table class="student-table assignment-table"><thead><tr><th><input type="checkbox" id="assignmentSelectAll" aria-label="Pilih semua siswa yang belum ditugaskan"></th><th>Nama Siswa</th><th>NIS</th><th>Kelas</th><th>Konselor Aktif</th><th>Status</th></tr></thead><tbody id="assignmentStudentBody"><tr><td colspan="6" class="empty-data">Memuat...</td></tr></tbody></table></div>
+<div class="assignment-actions"><span id="assignmentSelectedCount" class="muted">0 siswa dipilih</span><button id="assignStudentsBtn" class="primary-btn" type="button" disabled>Tetapkan Konselor</button></div>
+<p id="assignmentMessage" class="muted"></p>
+</div>
+<div class="settings-card settings-wide"><div class="page-header compact"><div><h3>Manajemen Pengguna</h3><p class="muted">Kelola akun Konselor pada sekolah ini. Catatan konseling tetap hanya dapat dibuka oleh akun Konselor.</p></div><button id="addCounselorBtn" class="primary-btn" type="button">+ Tambah Konselor</button></div>
+<div class="table-container"><table class="student-table"><thead><tr><th>Nama</th><th>Role</th><th>Telepon</th></tr></thead><tbody id="settingsUserBody"></tbody></table></div></div>
+<div class="privacy-note"><strong>Security &amp; Database v2:</strong> Karier &amp; Studi tersimpan di Supabase. Catatan Konseling dan Tindak Lanjut rahasia hanya dibuka oleh akun Konselor.</div><div class="settings-footer">SahabatBK — Made by YuGoQ</div>
+</section>
+
+<div id="studentModal" class="modal" style="display:none"><div class="modal-card"><div class="modal-header"><h3>Tambah Siswa</h3><button id="closeStudentModal">×</button></div><form id="studentForm"><label>Nama Lengkap</label><input id="studentName" required><label>NIS</label><input id="studentNis"><label>NISN (Opsional)</label><input id="studentNisn"><label>Kelas</label><select id="studentClass" required><option value="">Pilih kelas</option></select><label>Jenis Kelamin</label><select id="studentGender" required><option value="">Pilih</option><option value="L">Laki-laki</option><option value="P">Perempuan</option></select><label>Status</label><select id="studentStatus"><option value="active">Aktif</option><option value="graduated">Lulus</option><option value="moved">Pindah</option><option value="inactive">Tidak Aktif</option></select><button class="primary-btn form-submit">Simpan Siswa</button><p id="studentMessage"></p></form></div></div>
+<div id="assessmentModal" class="modal" style="display:none"><div class="modal-card"><div class="modal-header"><h3 id="assessmentModalTitle">Tambah Asesmen</h3><button id="closeAssessmentModal">×</button></div><form id="assessmentForm"><label>Judul Asesmen</label><input id="assessmentTitle" required><label>Jenis Asesmen</label><select id="assessmentType" required><option value="">Pilih jenis</option><option value="kebutuhan">Kebutuhan Siswa</option><option value="minat">Minat</option><option value="bakat_minat">Bakat & Minat</option><option value="karier">Karier & Studi</option><option value="lainnya">Lainnya</option></select><label>Deskripsi</label><textarea id="assessmentDescription" rows="4"></textarea><label>Status</label><select id="assessmentActive"><option value="true">Aktif</option><option value="false">Nonaktif</option></select><button class="primary-btn form-submit">Simpan Asesmen</button><p id="assessmentMessage"></p></form></div></div>
+</section></div><footer class="app-footer">SahabatBK &bull; Made by YuGoQ</footer>
+<div id="talentModal" class="modal" style="display:none;"><div class="modal-card"><div class="modal-header"><h3 id="talentModalTitle">Tambah Pemetaan</h3><button type="button" id="closeTalentModal">×</button></div>
+<form id="talentForm">
+<label>Siswa</label><select id="talentStudent" required><option value="">Pilih siswa</option></select>
+<label>Instrumen</label><select id="talentAssessment" required><option value="">Pilih instrumen</option></select>
+<label>Ringkasan Hasil</label><textarea id="talentSummary" rows="4" placeholder="Tuliskan ringkasan hasil pemetaan" required></textarea>
+<label>Rekomendasi</label><textarea id="talentRecommendation" rows="4" placeholder="Tuliskan rekomendasi pengembangan"></textarea>
+<button type="submit" class="primary-btn form-submit">Simpan Pemetaan</button><p id="talentMessage"></p>
+</form></div></div>
+
+
+<div id="counselingModal" class="modal" style="display:none;"><div class="modal-card counseling-modal-card">
+<div class="modal-header"><h3 id="counselingModalTitle">Catat Konseling</h3><button type="button" id="closeCounselingModal">×</button></div>
+<form id="counselingForm">
+<label>Siswa</label><select id="counselingStudent" required><option value="">Pilih siswa</option></select>
+<label>Tanggal Konseling</label><input type="date" id="counselingDate" required>
+<label>Jenis Layanan</label><select id="counselingType" required><option value="">Pilih jenis</option><option value="individual">Konseling Individual</option><option value="group">Konseling Kelompok</option><option value="consultation">Konsultasi</option><option value="referral">Rujukan</option><option value="other">Lainnya</option></select>
+<label>Topik</label><input type="text" id="counselingTopic" required placeholder="Topik utama layanan">
+<label>Ringkasan Masalah</label><textarea id="problemSummary" rows="3" placeholder="Ringkasan seperlunya"></textarea>
+<label>Catatan Konseling</label><textarea id="counselingNotes" rows="5" placeholder="Catatan layanan yang bersifat rahasia"></textarea>
+<label>Tingkat Kerahasiaan</label><select id="counselingConfidentiality"><option value="private">Privat</option><option value="restricted">Terbatas</option><option value="general">Umum</option></select>
+<label>Status</label><select id="counselingStatus"><option value="open">Terbuka</option><option value="monitoring">Pemantauan</option><option value="completed">Selesai</option><option value="referred">Dirujuk</option></select>
+<button type="submit" class="primary-btn form-submit">Simpan Konseling</button><p id="counselingMessage"></p>
+</form></div></div>
+
+
+<div id="followupModal" class="modal" style="display:none;"><div class="modal-card"><div class="modal-header"><h3 id="followupModalTitle">Tambah Tindak Lanjut</h3><button type="button" id="closeFollowupModal">×</button></div>
+<form id="followupForm">
+<label>Siswa</label><select id="followupStudent" required><option value="">Pilih siswa</option></select>
+<label>Riwayat Konseling Terkait</label><select id="followupCounseling"><option value="">Tanpa kaitan langsung</option></select>
+<label>Tanggal Tindak Lanjut</label><input type="date" id="followupDate" required>
+<label>Rencana Tindakan</label><textarea id="followupPlan" rows="4" required placeholder="Tuliskan rencana tindak lanjut"></textarea>
+<label>Catatan Hasil</label><textarea id="followupResult" rows="4" placeholder="Diisi setelah tindak lanjut dilaksanakan"></textarea>
+<label>Status</label><select id="followupStatus"><option value="planned">Direncanakan</option><option value="in_progress">Proses</option><option value="completed">Selesai</option><option value="cancelled">Dibatalkan</option></select>
+<button type="submit" class="primary-btn form-submit">Simpan Tindak Lanjut</button><p id="followupMessage"></p>
+</form></div></div>
+
+
+<div id="careerModal" class="modal" style="display:none;"><div class="modal-card">
+<div class="modal-header"><h3 id="careerModalTitle">Tambah Rencana Karier &amp; Studi</h3><button type="button" id="closeCareerModal">×</button></div>
+<form id="careerForm">
+<label>Siswa</label><select id="careerStudent" required><option value="">Pilih siswa</option></select>
+<label>Rencana Setelah Lulus</label><select id="careerPath" required><option value="">Pilih rencana</option><option value="kuliah">Kuliah</option><option value="kerja">Kerja</option><option value="wirausaha">Wirausaha</option><option value="kedinasan">Kedinasan</option><option value="lainnya">Lainnya</option></select>
+<label>Jurusan / Bidang yang Diminati</label><input type="text" id="careerField" placeholder="Contoh: Teknik Informatika, Perhotelan, Kuliner">
+<label>Perguruan Tinggi / Instansi / Tempat Tujuan</label><input type="text" id="careerDestination" placeholder="Tuliskan tujuan utama">
+<label>Catatan Rencana</label><textarea id="careerNotes" rows="4" placeholder="Target, persiapan, alternatif, atau catatan pendampingan"></textarea>
+<label>Referensi Bakat &amp; Minat</label><select id="careerTalentResult"><option value="">Tidak dikaitkan</option></select>
+<button type="submit" class="primary-btn form-submit">Simpan Rencana</button><p id="careerMessage"></p>
+</form></div></div>
+
+
+<div id="classModal" class="modal" style="display:none;"><div class="modal-card">
+<div class="modal-header"><h3>Tambah Kelas</h3><button type="button" id="closeClassModal">×</button></div>
+<form id="classForm"><label>Nama Kelas</label><input id="newClassName" required placeholder="Contoh: XI B">
+<label>Tahun Ajaran</label><input id="newAcademicYear" required placeholder="2026/2027">
+<label>Tingkat</label><select id="newGradeLevel" required><option value="10">X</option><option value="11">XI</option><option value="12">XII</option></select>
+<button type="submit" class="primary-btn form-submit">Simpan Kelas</button><p id="classMessage"></p></form></div></div>
+
+
+<div id="counselorModal" class="modal" style="display:none;"><div class="modal-card">
+<div class="modal-header"><h3>Tambah Akun Konselor</h3><button type="button" id="closeCounselorModal">×</button></div>
+<form id="counselorForm">
+<label>Nama Konselor</label><input id="counselorName" type="text" required placeholder="Nama lengkap">
+<label>Email Login</label><input id="counselorEmail" type="email" required placeholder="nama@email.com">
+<label>Nomor HP</label><input id="counselorPhone" type="text" placeholder="08xxxxxxxxxx">
+<label>Password Awal</label><input id="counselorPassword" type="password" required minlength="8" placeholder="Minimal 8 karakter">
+<div class="privacy-note"><strong>Keamanan:</strong> password dikirim langsung ke fungsi backend Supabase untuk membuat akun Auth dan tidak disimpan di data profil SahabatBK.</div>
+<button type="submit" class="primary-btn form-submit">Buat Akun Konselor</button>
+<p id="counselorMessage"></p>
+</form></div></div>
+
+<script src="app.js"></script>
+<!-- Manajemen Akun v2: Reset Password Konselor -->
+<div id="resetCounselorPasswordModal" class="modal" style="display:none;">
+  <div class="modal-card account-reset-card">
+    <div class="modal-header">
+      <div>
+        <h3>Reset Password Konselor</h3>
+        <p id="resetCounselorName" class="modal-subtitle"></p>
+      </div>
+      <button type="button" class="modal-close" id="closeResetCounselorPassword" aria-label="Tutup">×</button>
+    </div>
+    <form id="resetCounselorPasswordForm">
+      <input type="hidden" id="resetCounselorId">
+      <label for="resetCounselorNewPassword">Password baru</label>
+      <div class="password-field-wrap">
+        <input id="resetCounselorNewPassword" type="password" minlength="8" autocomplete="new-password"
+               placeholder="Minimal 8 karakter" required>
+        <button type="button" class="password-toggle-btn" id="toggleResetPassword">Lihat</button>
+      </div>
+      <label for="resetCounselorConfirmPassword">Ulangi password baru</label>
+      <div class="password-field-wrap">
+        <input id="resetCounselorConfirmPassword" type="password" minlength="8" autocomplete="new-password"
+               placeholder="Ketik ulang password" required>
+      </div>
+      <p class="account-security-note">Password lama tidak dapat dilihat. Reset hanya dapat dilakukan Admin Sekolah untuk akun Konselor di sekolah yang sama.</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" id="cancelResetCounselorPassword">Batal</button>
+        <button type="submit" class="primary-btn" id="submitResetCounselorPassword">Simpan Password Baru</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Manajemen Akun v2.1 -->
+<div id="manageCounselorModal" class="modal" style="display:none;">
+  <div class="modal-card account-reset-card">
+    <div class="modal-header">
+      <div>
+        <h3 id="manageCounselorTitle">Nonaktifkan Konselor</h3>
+        <p id="manageCounselorName" class="modal-subtitle"></p>
+      </div>
+      <button type="button" class="modal-close" id="closeManageCounselor" aria-label="Tutup">×</button>
+    </div>
+    <form id="manageCounselorForm">
+      <input type="hidden" id="manageCounselorId">
+      <input type="hidden" id="manageCounselorAction">
+      <div id="deactivationReasonWrap">
+        <label for="deactivationReason">Alasan penonaktifan</label>
+        <select id="deactivationReason">
+          <option value="">Pilih alasan</option>
+          <option value="Pensiun">Pensiun</option>
+          <option value="Pindah tugas">Pindah tugas</option>
+          <option value="Tidak lagi bertugas sebagai Guru BK">Tidak lagi bertugas sebagai Guru BK</option>
+          <option value="Cuti / nonaktif sementara">Cuti / nonaktif sementara</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+        <textarea id="deactivationReasonOther" rows="2" placeholder="Keterangan lain (opsional)"></textarea>
+      </div>
+      <p class="account-security-note" id="manageCounselorInfo">
+        Akun tidak dihapus. Riwayat konseling tetap tersimpan.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" id="cancelManageCounselor">Batal</button>
+        <button type="submit" class="primary-btn" id="submitManageCounselor">Nonaktifkan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Serah Terima Konselor v1 -->
+<div id="handoverCounselorModal" class="modal" style="display:none;">
+  <div class="modal-card handover-card">
+    <div class="modal-header">
+      <div>
+        <h3>Serah Terima Konselor</h3>
+        <p class="modal-subtitle">Dari: <strong id="handoverFromName">KONSELOR</strong></p>
+      </div>
+      <button type="button" class="modal-close" id="closeHandoverCounselor" aria-label="Tutup">×</button>
+    </div>
+    <form id="handoverCounselorForm">
+      <input type="hidden" id="handoverFromId">
+      <label for="handoverToId">Konselor pengganti</label>
+      <select id="handoverToId" required><option value="">Pilih konselor pengganti</option></select>
+      <div class="handover-list-head">
+        <label>Siswa yang diserahterimakan</label>
+        <label class="handover-select-all"><input type="checkbox" id="handoverSelectAll" checked> Pilih semua</label>
+      </div>
+      <div id="handoverStudentList" class="handover-student-list"></div>
+      <label for="handoverNote">Alasan / catatan serah terima</label>
+      <textarea id="handoverNote" rows="3" required placeholder="Contoh: Pergantian konselor karena pindah tugas. Jangan menuliskan isi konseling rahasia di sini."></textarea>
+      <p class="account-security-note">Serah terima hanya memindahkan penugasan siswa. Catatan konseling lama tidak dipindahkan, tidak diubah, dan tetap tercatat pada Konselor yang membuatnya.</p>
+      <p id="handoverMessage" class="muted"></p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-btn" id="cancelHandoverCounselor">Batal</button>
+        <button type="submit" class="primary-btn" id="submitHandoverCounselor">Proses Serah Terima</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body></html>
