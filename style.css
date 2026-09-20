@@ -958,3 +958,121 @@ textarea:focus-visible,
 #roleDashboard .quick-action-arrow{
   align-self:center!important;
 }
+
+/* =========================================================
+   SahabatBK v3.0 RC7 — Mobile Navigation
+   Desktop tetap memakai sidebar permanen. Pada HP sidebar menjadi
+   drawer agar konten utama langsung terlihat saat halaman dibuka.
+========================================================= */
+.mobile-menu-btn,.sidebar-backdrop{display:none}
+
+@media(max-width:768px){
+  body.mobile-nav-open{overflow:hidden}
+  .dashboard{position:relative;min-height:100dvh}
+  .main-content{margin-left:0!important;padding:76px 18px 18px!important}
+  .app-footer{margin-left:0!important}
+
+  .mobile-menu-btn{
+    display:flex;
+    position:fixed;
+    z-index:1202;
+    top:14px;
+    left:16px;
+    width:46px;
+    height:46px;
+    margin:0;
+    padding:0;
+    align-items:center;
+    justify-content:center;
+    border:0;
+    border-radius:12px;
+    background:#173b67;
+    color:#fff;
+    box-shadow:0 6px 18px rgba(15,23,42,.18);
+    font-size:25px;
+    line-height:1;
+  }
+  .mobile-menu-btn:hover{background:#173b67}
+  .mobile-menu-btn:focus-visible{outline:3px solid rgba(56,189,248,.75);outline-offset:2px}
+
+  .sidebar-backdrop{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:1198;
+    background:rgba(15,23,42,.48);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .18s ease,visibility .18s ease;
+  }
+  body.mobile-nav-open .sidebar-backdrop{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+
+  .sidebar{
+    position:fixed!important;
+    z-index:1200;
+    top:0;
+    left:0;
+    width:min(84vw,310px)!important;
+    height:100vh!important;
+    height:100dvh!important;
+    min-height:0!important;
+    padding:22px 16px 16px!important;
+    overflow:hidden!important;
+    display:flex!important;
+    flex-direction:column!important;
+    transform:translateX(-105%);
+    transition:transform .2s ease;
+    box-shadow:14px 0 35px rgba(15,23,42,.22);
+  }
+  body.mobile-nav-open .sidebar{transform:translateX(0)}
+  .sidebar-brand{padding:4px 8px 16px!important}
+  .sidebar-brand strong{font-size:25px!important}
+  .sidebar-brand small{font-size:13px!important;margin-top:4px!important}
+  .sidebar-role-badge{
+    min-height:36px!important;
+    margin:0 0 12px!important;
+    padding:7px 10px!important;
+    width:100%!important;
+  }
+  .sidebar nav{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+    padding-right:2px;
+  }
+  .sidebar .menu{
+    min-height:43px!important;
+    margin:2px 0!important;
+    padding:10px 12px!important;
+    font-size:15px!important;
+  }
+  .logout-btn{
+    flex:0 0 auto!important;
+    min-height:44px!important;
+    margin:10px 0 0!important;
+    padding:10px 12px!important;
+    font-size:15px!important;
+  }
+  .topbar{margin-bottom:20px!important;gap:12px}
+  .topbar h2{font-size:25px!important}
+  .topbar .user-box{max-width:52%;}
+  .topbar .user-box strong{font-size:14px;overflow-wrap:anywhere}
+}
+
+@media(max-width:420px){
+  .main-content{padding:72px 14px 16px!important}
+  .mobile-menu-btn{top:12px;left:14px;width:44px;height:44px}
+  .sidebar{width:min(88vw,300px)!important;padding:18px 14px 14px!important}
+  .topbar h2{font-size:23px!important}
+  .topbar p{font-size:13px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .sidebar,.sidebar-backdrop{transition:none!important}
+}

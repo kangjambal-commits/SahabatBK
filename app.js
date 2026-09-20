@@ -3009,3 +3009,35 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 /* SahabatBK v2.8 - Siswa Binaan Konselor */
+
+/* =========================================================
+   SahabatBK v3.0 RC7 — Mobile drawer navigation
+========================================================= */
+(function initMobileNavigation(){
+  const btn=document.getElementById("mobileMenuBtn");
+  const sidebar=document.getElementById("appSidebar")||document.querySelector(".sidebar");
+  const backdrop=document.getElementById("sidebarBackdrop");
+  if(!btn||!sidebar||!backdrop)return;
+
+  const isMobile=()=>window.matchMedia("(max-width: 768px)").matches;
+  function setOpen(open){
+    const aktif=Boolean(open&&isMobile());
+    document.body.classList.toggle("mobile-nav-open",aktif);
+    btn.setAttribute("aria-expanded",aktif?"true":"false");
+    btn.setAttribute("aria-label",aktif?"Tutup menu navigasi":"Buka menu navigasi");
+    backdrop.setAttribute("aria-hidden",aktif?"false":"true");
+  }
+  btn.addEventListener("click",()=>setOpen(!document.body.classList.contains("mobile-nav-open")));
+  backdrop.addEventListener("click",()=>setOpen(false));
+  sidebar.addEventListener("click",e=>{
+    if(e.target.closest("button.menu")) setOpen(false);
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape") setOpen(false);
+  });
+  window.addEventListener("resize",()=>{
+    if(!isMobile()) setOpen(false);
+  });
+  if(logoutBtn) logoutBtn.addEventListener("click",()=>setOpen(false));
+  setOpen(false);
+})();
